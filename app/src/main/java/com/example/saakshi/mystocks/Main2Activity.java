@@ -26,7 +26,7 @@ EditText e;
 
                 String word=e.getText().toString();
 
-                Intent i=new Intent(Main2Activity.this,Tickers_Activity.class);
+                Intent i=new Intent(Main2Activity.this,Flight_Activity.class);
 
                 i.putExtra("search",word);
                 startActivity(i);

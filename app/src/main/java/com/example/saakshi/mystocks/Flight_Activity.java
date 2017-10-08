@@ -1,8 +1,8 @@
 package com.example.saakshi.mystocks;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,12 +16,16 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class Tickers_Activity extends AppCompatActivity {
+/**
+ * Created by navendu on 8/10/17.
+ */
+
+public class Flight_Activity extends AppCompatActivity {
     /*ArrayList<Stocks> stockNames;
-    ArrayList<Stocks> stocks;*/
-    ArrayList<Tickers> tinkerNames;
-    ArrayList<Tickers> tinkers;
-    TickersListAdapter tickersListAdapter;
+  ArrayList<Stocks> stocks;*/
+    ArrayList<flight> flightNames;
+    ArrayList<flight> flight;
+    FlightListAdapter FlightListAdapter;
 
     String y;
     String str = "";
@@ -29,30 +33,30 @@ public class Tickers_Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tickers_);
-        tinkerNames = new ArrayList<>();
-        tinkers = new ArrayList<>();
+        setContentView(R.layout.activity_flight);
+        flightNames = new ArrayList<>();
+        flight = new ArrayList<>();
 /*
         stocks = new ArrayList<>();*/
         ListView ll = (ListView) findViewById(R.id.ll);
   /*      stockNames = new ArrayList<>();*/
         Intent i = getIntent();
         String word = i.getStringExtra("search");
-        tickersListAdapter = new TickersListAdapter(this, tinkers);
-        ll.setAdapter(tickersListAdapter);
-        tinkers(word);
-
+        FlightListAdapter = new FlightListAdapter( this , flight);
+        ll.setAdapter(FlightListAdapter);
+        flight(word);
+/*
         ll.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent j = new Intent(Tickers_Activity.this, Stocks_Activity.class);
-                j.putExtra("ticker", tinkers.get(i).tinkerName);
+                Intent j = new Intent(Flight_Activity.this, Stocks_Activity.class);
+                j.putExtra("flight", flight.get(i).fid);
                 startActivity(j);
             }
-        });
+        });*/
     }
 
-    private void tinkers(String word) {
+    private void flight(String word) {
 
 
 //        String urlString = "https://stocksearchapi.com/api/?api_key=63951d6323a8ca82611e86c1a36706c6c47dc01b&format=api&search_text=" + word;
@@ -68,26 +72,28 @@ public class Tickers_Activity extends AppCompatActivity {
 
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://autoc.finance.yahoo.com/")
+                .baseUrl("http://ab9416fb.ngrok.io/customer/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         ApiInterface apiInterface = retrofit.create(ApiInterface.class);
 //        Call<TinkerResponse> call  =  apiInterface.getTinkers(word);
-        Call<TickerResponse> call = apiInterface.getTinkers(word, "US", "en");
+        Call<FlightResponse> call = apiInterface.getFlight();
 
         // apiInterface.getPost(1, 3);
 
-        call.enqueue(new Callback<TickerResponse>() {
+        call.enqueue(new Callback<FlightResponse>() {
             @Override
-            public void onResponse(Call<TickerResponse> call, Response<TickerResponse> response) {
-                TickerResponse tinkerResponse = response.body();
-                ArrayList<Tickers> tinkerArrayList = tinkerResponse.resultset.getTinkersList();
-                onDownloadComplete(tinkerArrayList);
+            public void onResponse(Call<FlightResponse> call, Response<FlightResponse> response) {
+                FlightResponse flightResponse = response.body();
+                ArrayList<flight> flightArrayList = flightResponse.resultset.getFlightList();
+                onDownloadComplete(flightArrayList);
+
+
             }
 
             @Override
-            public void onFailure(Call<TickerResponse> call, Throwable t) {
+            public void onFailure(Call<FlightResponse> call, Throwable t) {
 
             }
         });
@@ -159,17 +165,17 @@ public class Tickers_Activity extends AppCompatActivity {
 
     }*/
 
-    public void onDownloadComplete(ArrayList<Tickers> tinkerList) {
-        tinkerNames.clear();
-        tinkerNames.addAll(tinkerList);
+    public void onDownloadComplete(ArrayList<flight> FlightList) {
+        flightNames.clear();
+        flightNames.addAll(FlightList);
         //  y = tinkerNames.get(0).tinkerName;
-        for (int i = 0; i < tinkerNames.size(); i++) {
-            Tickers c = new Tickers(tinkerNames.get(i).companyName, tinkerNames.get(i).tinkerName);
+        for (int i = 0; i < flightNames.size(); i++) {
+            flight c = new flight(flightNames.get(i).id,flightNames.get(i).fid, flightNames.get(i).source,flightNames.get(i).destination,flightNames.get(i).stime,flightNames.get(i).dtime);
 
-            tinkers.add(c);
+            flight.add(c);
         }
 
-        tickersListAdapter.notifyDataSetChanged();
+        FlightListAdapter.notifyDataSetChanged();
 
         // info(tinkers);
         //  expenseListAdapter.notifyDataSetChanged();
